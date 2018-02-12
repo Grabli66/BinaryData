@@ -107,9 +107,7 @@ class BinaryData extends Object with IterableMixin {
 
   /// Copy buffer to data
   Uint8List toData() {
-    var res = new Uint8List(_length);
-    res.setRange(0, _length, _buffer);
-    return res;
+    return _buffer.buffer.asUint8List(0, _length);
   }
 
   /// Convert data to hex string
