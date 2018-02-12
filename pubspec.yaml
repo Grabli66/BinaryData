@@ -5,9 +5,5 @@ version: 0.0.2
 environment:
   sdk: '>=2.0.0-dev.20.0'
 
-dependencies:
-  object_pool:
-    git: "https://github.com/RapidFingers/PoolObject"
-
 dev_dependencies:
-  test: ^0.12.0
+  test: any
