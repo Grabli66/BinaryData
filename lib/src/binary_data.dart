@@ -101,6 +101,12 @@ class BinaryData extends Object with IterableMixin {
     _init(data);
   }
 
+  /// Create BinaryData from List<int>
+  BinaryData.fromList(List<int> data) {    
+    var list = new Uint8List.fromList(data);    
+    _init(list);
+  }
+
   /// Return iterator
   @override
   Iterator<int> get iterator => new LimitedBufferIterator(_buffer, _length);

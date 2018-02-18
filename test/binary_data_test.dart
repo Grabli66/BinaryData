@@ -3,6 +3,12 @@ import 'package:test/test.dart';
 
 void main() {
   group('Pooled test', () {
+    test('From list', () {
+      var binData1 = new BinaryData.fromList([1,2,3,4,5,6]);
+      var binData2 = new BinaryData.fromList([1,2,3,4,5,6]);
+      expect(binData1.toHex() == binData2.toHex(), isTrue);
+    });
+
     test('Object equals', () {
       var binData1 = new BinaryDataPooled();
       var binData2 = new BinaryDataPooled();
