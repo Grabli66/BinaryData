@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9621c519-7b06-4932-b6c3-46d610f166a2" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/lib/src/binary_data.dart" afterPath="$PROJECT_DIR$/lib/src/binary_data.dart" />
-      <change beforePath="$PROJECT_DIR$/test/binary_data_test.dart" afterPath="$PROJECT_DIR$/test/binary_data_test.dart" />
+      <change beforePath="$PROJECT_DIR$/lib/binary_data_lib.dart" afterPath="$PROJECT_DIR$/lib/binary_data_lib.dart" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -24,13 +23,26 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="binary_data_test.dart" pinned="false" current-in-tab="true">
+      <file leaf-file-name="binary_data_test.dart" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test/binary_data_test.dart">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="360">
-              <caret line="21" column="15" lean-forward="false" selection-start-line="21" selection-start-column="15" selection-end-line="21" selection-end-column="15" />
+            <state relative-caret-position="60">
+              <caret line="3" column="0" lean-forward="true" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
               <folding>
                 <element signature="e#0#37#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="binary_data_lib.dart" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/lib/binary_data_lib.dart">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="80">
+              <caret line="4" column="25" lean-forward="false" selection-start-line="4" selection-start-column="25" selection-end-line="4" selection-end-column="25" />
+              <folding>
+                <element signature="e#22#47#0" expanded="true" />
+                <element signature="e#98#126#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -73,6 +85,7 @@
         <option value="$PROJECT_DIR$/pubspec.yaml" />
         <option value="$PROJECT_DIR$/lib/src/binary_data.dart" />
         <option value="$PROJECT_DIR$/test/binary_data_test.dart" />
+        <option value="$PROJECT_DIR$/lib/binary_data_lib.dart" />
       </list>
     </option>
   </component>
@@ -282,7 +295,9 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager />
+    <breakpoint-manager>
+      <option name="time" value="1" />
+    </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
@@ -312,10 +327,21 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/test/binary_data_test.dart">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="21" column="15" lean-forward="false" selection-start-line="21" selection-start-column="15" selection-end-line="21" selection-end-column="15" />
+        <state relative-caret-position="60">
+          <caret line="3" column="0" lean-forward="true" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
           <folding>
             <element signature="e#0#37#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/binary_data_lib.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="80">
+          <caret line="4" column="25" lean-forward="false" selection-start-line="4" selection-start-column="25" selection-end-line="4" selection-end-column="25" />
+          <folding>
+            <element signature="e#22#47#0" expanded="true" />
+            <element signature="e#98#126#0" expanded="true" />
           </folding>
         </state>
       </provider>
