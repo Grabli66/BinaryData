@@ -1,15 +1,27 @@
 import '../lib/binary_data_lib.dart';
+import 'package:collection/collection.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('Pooled test', () {
-    test('From list', () {
+  group('BinaryData', () {
+    test('fromlist', () {
       var binData1 = new BinaryData.fromList([1,2,3,4,5,6]);
       var binData2 = new BinaryData.fromList([1,2,3,4,5,6]);
       expect(binData1.toHex() == binData2.toHex(), isTrue);
     });
 
-    test('Object equals', () {
+    test('readArray', () {
+      var binData1 = new BinaryData.fromList([1,2,3,4,5,6]);
+      binData1.setPos(2);
+      var binData2 = binData1.readArray(3);
+      final eq = const ListEquality().equals;
+
+      expect(eq(binData2.toList(), [3,4,5]), isTrue);
+    });
+  });
+
+  group('BinaryDataPooled', () {
+    test('equals', () {
       var binData1 = new BinaryDataPooled();
       var binData2 = new BinaryDataPooled();
 

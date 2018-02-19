@@ -30,7 +30,7 @@ class LimitedBufferIterator extends Iterator<int> {
 ///  For working with bytes in memory
 class BinaryData extends Object with IterableMixin {
   /// Increase part size
-  static const PART_SIZE = 1000000;
+  static const PART_SIZE = 100;
 
   /// Buffer increase ratio
   static const INCREASE_VALUE = 2;
@@ -64,10 +64,11 @@ class BinaryData extends Object with IterableMixin {
   }
 
   /// Inc position and length
-  void _incPos(int size) {
+  void _incPos(int size, [bool incLength = true]) {
     _pos += size;
-    if (_pos > _length)
-      _length += _pos - _length;
+    if (incLength)
+      if (_pos > _length)
+        _length += _pos - _length;
   }
 
   /// Read length from buffer
@@ -186,9 +187,16 @@ class BinaryData extends Object with IterableMixin {
     _incPos(4);
   }
 
-  /// Read string with length
-  String readString(int len) {
-    return UTF8.decode(_bytes.buffer.asUint8List(_pos, len));
+  /// Read array from current pos with [length]
+  Uint8List readArray(int length) {
+    final res = _bytes.buffer.asUint8List(_pos, length);
+    _incPos(length, false);
+    return res;
+  }
+
+  /// Read string from current pos with [length]
+  String readString(int length) {
+    return UTF8.decode(readArray(length));
   }
 
   /// Read string with length
@@ -202,21 +210,21 @@ class BinaryData extends Object with IterableMixin {
   /// Read UInt8 from buffer
   int readUInt8() {
     final res = _bytes.getUint8(_pos);
-    _pos += 1;
+    _incPos(1, false);
     return res;
   }
 
   /// Read UInt16 from buffer
   int readUInt16() {
     final res = _bytes.getUint16(_pos);
-    _pos += 2;
+    _incPos(2, false);
     return res;
   }
 
   /// Read UInt32 from buffer
   int readUInt32() {
     final res = _bytes.getUint32(_pos);
-    _pos += 4;
+    _incPos(4, false);
     return res;
   }
 }
