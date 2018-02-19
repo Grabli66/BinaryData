@@ -28,6 +28,8 @@ class LimitedBufferIterator extends Iterator<int> {
 }
 
 ///  For working with bytes in memory
+///  Functions with read/write prefix are stream like and works with current position
+///  Function with set/get prefix uses position as parameter
 class BinaryData extends Object with IterableMixin {
   /// Increase part size
   static const PART_SIZE = 100;
@@ -142,46 +144,46 @@ class BinaryData extends Object with IterableMixin {
   }
 
   /// Add length to buffer
-  void addLength(int value) {
-    addUInt8(value);
+  void writeLength(int value) {
+    writeUInt8(value);
   }
 
   /// Add List<int>
-  void addList(List<int> value) {
+  void writeList(List<int> value) {
     _prepareSize(value.length);
     _buffer.setAll(_pos, value);
     _incPos(value.length);
   }
 
   /// Add raw UTF-8 string
-  void addString(String value) {
+  void writeString(String value) {
     final arr = UTF8.encode(value);
-    addList(arr);
+    writeList(arr);
   }
 
   /// Add string with length
-  void addStringWithLength(String value) {
+  void writeStringWithLength(String value) {
     final arr = UTF8.encode(value);
-    addLength(arr.length);
-    addList(arr);
+    writeLength(arr.length);
+    writeList(arr);
   }
 
   /// Add UInt8
-  void addUInt8(int value) {
+  void writeUInt8(int value) {
     _prepareSize(1);
     _bytes.setUint8(_pos, value);
     _incPos(1);
   }
 
   /// Add UInt16
-  void addUInt16(int value) {
+  void writeUInt16(int value) {
     _prepareSize(2);
     _bytes.setUint16(_pos, value);
     _incPos(2);
   }
 
   /// Add UInt32
-  void addUInt32(int value) {
+  void writeUInt32(int value) {
     _prepareSize(4);
     _bytes.setUint32(_pos, value);
     _incPos(4);
@@ -189,7 +191,7 @@ class BinaryData extends Object with IterableMixin {
 
   /// Read array from current pos with [length]
   Uint8List readArray(int length) {
-    final res = _bytes.buffer.asUint8List(_pos, length);
+    final res = getArray(_pos, length);
     _incPos(length, false);
     return res;
   }
@@ -226,5 +228,10 @@ class BinaryData extends Object with IterableMixin {
     final res = _bytes.getUint32(_pos);
     _incPos(4, false);
     return res;
+  }
+
+  /// Get array from [pos] and [length]
+  Uint8List getArray(int pos, int length) {
+    return _bytes.buffer.asUint8List(pos, length);
   }
 }

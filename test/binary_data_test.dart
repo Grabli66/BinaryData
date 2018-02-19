@@ -18,6 +18,14 @@ void main() {
 
       expect(eq(binData2.toList(), [3,4,5]), isTrue);
     });
+
+    test('getArray', () {
+      var binData1 = new BinaryData.fromList([1,2,3,4,5,6]);
+      var binData2 = binData1.getArray(2, 3);
+      final eq = const ListEquality().equals;
+
+      expect(eq(binData2.toList(), [3,4,5]), isTrue);
+    });
   });
 
   group('BinaryDataPooled', () {
