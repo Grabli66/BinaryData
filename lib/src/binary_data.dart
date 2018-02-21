@@ -176,16 +176,16 @@ class BinaryData extends Object with IterableMixin {
   }
 
   /// Add UInt16
-  void writeUInt16(int value) {
+  void writeUInt16(int value, [Endian endian = Endian.big]) {
     _prepareSize(2);
-    _bytes.setUint16(_pos, value);
+    _bytes.setUint16(_pos, value, endian);
     _incPos(2);
   }
 
   /// Add UInt32
-  void writeUInt32(int value) {
+  void writeUInt32(int value, [Endian endian = Endian.big]) {
     _prepareSize(4);
-    _bytes.setUint32(_pos, value);
+    _bytes.setUint32(_pos, value, endian);
     _incPos(4);
   }
 
