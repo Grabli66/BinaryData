@@ -237,6 +237,13 @@ class BinaryData extends Object with IterableMixin {
     return res;
   }
 
+  /// Read UInt64 from buffer
+  int readUInt64() {
+    final res = _bytes.getUint64(_pos);
+    _incPos(8, false);
+    return res;
+  }
+
   /// Get array from [pos] and [length]
   Uint8List getArray(int pos, int length) {
     return _bytes.buffer.asUint8List(pos, length);
