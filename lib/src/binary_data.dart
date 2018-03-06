@@ -196,16 +196,22 @@ class BinaryData extends Object with IterableMixin {
     _incPos(8);
   }
 
-  /// Read array from current pos with [length]
-  Uint8List readArray(int length) {
-    final res = getArray(_pos, length);
-    _incPos(length, false);
+  /// Read list from current pos with [length]
+  /// If length not assigned then it reads to the end
+  Uint8List readList([int length]) {
+    var len = _length - _pos;
+    if (length != null) {
+      len = length;
+    }
+
+    final res = getArray(_pos, len);
+    _incPos(len, false);
     return res;
   }
 
   /// Read string from current pos with [length]
   String readString(int length) {
-    return UTF8.decode(readArray(length));
+    return UTF8.decode(readList(length));
   }
 
   /// Read string with length
