@@ -33,7 +33,7 @@ class BinaryDataPooled extends BinaryData {
 
   /// Private constructor
   BinaryDataPooled._internalFromList(Uint8List data)
-      : super.fromUInt8List(data);
+      : super.fromList(data);
 
   /// For release object
   void release() {

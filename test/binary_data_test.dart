@@ -4,6 +4,21 @@ import 'package:test/test.dart';
 
 void main() {
   group('BinaryData', () {
+    test('length', () {
+      var binData = new BinaryData.fromList([3,4,5,2,1]);
+      binData.readUInt8();
+      binData.readUInt8();
+      expect(binData.length == 5, isTrue);
+    });
+
+    test('remain', () {
+      var binData = new BinaryData.fromList([3,4,5,2,1,5,4,2,1]);
+      binData.readUInt8();
+      binData.readUInt8();
+      binData.readList();
+      expect(binData.remain == 0, isTrue);
+    });
+
     test('fromlist', () {
       var binData1 = new BinaryData.fromList([1,2,3,4,5,6]);
       var binData2 = new BinaryData.fromList([1,2,3,4,5,6]);

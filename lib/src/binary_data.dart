@@ -37,6 +37,9 @@ class BinaryData extends Object with IterableMixin {
   /// Buffer increase ratio
   static const INCREASE_VALUE = 2;
 
+  /// Utf8 codec
+  static const Utf8Codec _utf8 = const Utf8Codec();
+
   /// Buffer
   Uint8List _buffer;
 
@@ -68,9 +71,13 @@ class BinaryData extends Object with IterableMixin {
   /// Inc position and length
   void _incPos(int size, [bool incLength = true]) {
     _pos += size;
-    if (incLength)
-      if (_pos > _length)
+    if (_pos > _length) {
+      if (incLength) {
         _length += _pos - _length;
+      } else {
+        _pos = _length;
+      }
+    }
   }
 
   /// Read length from buffer
@@ -87,6 +94,12 @@ class BinaryData extends Object with IterableMixin {
     _pos = 0;
   }
 
+  /// Current length
+  int get length => _length;
+
+  /// Remain bytes in binary data
+  int get remain => _length - _pos;
+
   /// Constructor
   BinaryData() {
     _init(new Uint8List(PART_SIZE));
@@ -97,11 +110,6 @@ class BinaryData extends Object with IterableMixin {
   void clear() {
     _pos = 0;
     _length = 0;
-  }
-
-  /// Create BinaryData from UInt8List
-  BinaryData.fromUInt8List(Uint8List data) {
-    _init(data);
   }
 
   /// Create BinaryData from List<int>
@@ -157,13 +165,13 @@ class BinaryData extends Object with IterableMixin {
 
   /// Add raw UTF-8 string
   void writeString(String value) {
-    final arr = UTF8.encode(value);
+    final arr = _utf8.encode(value);
     writeList(arr);
   }
 
   /// Add string with length
   void writeStringWithLength(String value) {
-    final arr = UTF8.encode(value);
+    final arr = _utf8.encode(value);
     writeLength(arr.length);
     writeList(arr);
   }
@@ -211,7 +219,7 @@ class BinaryData extends Object with IterableMixin {
 
   /// Read string from current pos with [length]
   String readString(int length) {
-    return UTF8.decode(readList(length));
+    return utf8.decode(readList(length));
   }
 
   /// Read string with length
