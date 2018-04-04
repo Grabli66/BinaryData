@@ -50,6 +50,30 @@ void main() {
 
       expect(eq(binData2.toList(), [3,4,5]), isTrue);
     });
+
+    test("read/write varint", () {
+      final binary = new BinaryData();
+      binary.writeVarInt(0x32);
+      binary.writeVarInt(-127);
+      binary.writeVarInt(0xFF32);
+      binary.writeVarInt(-5426);
+      binary.writeVarInt(0xFFFF65);
+      binary.writeVarInt(-63213);
+      binary.writeVarInt(0xFFFFFFFF84);
+      binary.writeVarInt(-31237547212);
+
+      binary.setPos(0);
+
+      final eq = const Equality().equals;
+      expect(eq(binary.readVarInt(), 0x32), isTrue);
+      expect(eq(binary.readVarInt(), -127), isTrue);
+      expect(eq(binary.readVarInt(), 0xFF32), isTrue);
+      expect(eq(binary.readVarInt(), -5426), isTrue);
+      expect(eq(binary.readVarInt(), 0xFFFF65), isTrue);
+      expect(eq(binary.readVarInt(), -63213), isTrue);
+      expect(eq(binary.readVarInt(), 0xFFFFFFFF84), isTrue);
+      expect(eq(binary.readVarInt(), -31237547212), isTrue);
+    });
   });
 
   group('BinaryDataPooled', () {

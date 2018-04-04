@@ -1,7 +1,19 @@
 part of '../binary_data_lib.dart';
 
+/// Integer type constants
+class IntTypes {
+  static const Int8 = 0xA1;
+  static const Int16 = 0xA2;
+  static const Int32 = 0xA3;
+  static const Int64 = 0xA4;
+  static const UInt8 = 0xA5;
+  static const UInt16 = 0xA6;
+  static const UInt32 = 0xA7;
+  static const UInt64 = 0xA8;
+}
+
 /// Iterates buffer
-class LimitedBufferIterator extends Iterator<int> {  
+class LimitedBufferIterator extends Iterator<int> {
   /// Some buffer
   Uint8List _buffer;
 
@@ -54,13 +66,11 @@ class BinaryData extends Object with IterableMixin {
 
   /// Prepare size
   void _prepareSize(int wantedSize) {
-    if (_buffer.length > _pos + wantedSize) 
-      return;
+    if (_buffer.length > _pos + wantedSize) return;
 
     // Increase size by INCREASE_VALUE
     var len = _buffer.length * INCREASE_VALUE;
-    if (len < _buffer.length + wantedSize) 
-      len = _buffer.length + wantedSize;
+    if (len < _buffer.length + wantedSize) len = _buffer.length + wantedSize;
 
     var newBuff = new Uint8List(len);
     newBuff.setAll(0, _buffer);
@@ -113,8 +123,8 @@ class BinaryData extends Object with IterableMixin {
   }
 
   /// Create BinaryData from List<int>
-  BinaryData.fromList(List<int> data) {    
-    var list = new Uint8List.fromList(data);    
+  BinaryData.fromList(List<int> data) {
+    var list = new Uint8List.fromList(data);
     _init(list);
   }
 
@@ -176,6 +186,13 @@ class BinaryData extends Object with IterableMixin {
     writeList(arr);
   }
 
+  /// Write Int8
+  void writeInt8(int value) {
+    _prepareSize(1);
+    _bytes.setInt8(_pos, value);
+    _incPos(1);
+  }
+
   /// Write UInt8
   void writeUInt8(int value) {
     _prepareSize(1);
@@ -183,10 +200,17 @@ class BinaryData extends Object with IterableMixin {
     _incPos(1);
   }
 
+  /// Write Int16
+  void writeInt16(int value, [Endian endian = Endian.big]) {
+    _prepareSize(2);
+    _bytes.setInt16(_pos, value, endian);
+    _incPos(2);
+  }
+
   /// Write UInt16
   void writeUInt16(int value, [Endian endian = Endian.big]) {
     _prepareSize(2);
-    _bytes.setUint16(_pos, value, endian);
+    _bytes.setInt16(_pos, value, endian);
     _incPos(2);
   }
 
@@ -197,11 +221,59 @@ class BinaryData extends Object with IterableMixin {
     _incPos(4);
   }
 
+  /// Write Int32
+  void writeInt32(int value, [Endian endian = Endian.big]) {
+    _prepareSize(4);
+    _bytes.setInt32(_pos, value, endian);
+    _incPos(4);
+  }
+
   /// Write UInt64
   void writeUInt64(int value, [Endian endian = Endian.big]) {
     _prepareSize(8);
     _bytes.setUint64(_pos, value, endian);
     _incPos(8);
+  }
+
+  /// Write Int64
+  void writeInt64(int value, [Endian endian = Endian.big]) {
+    _prepareSize(8);
+    _bytes.setInt64(_pos, value, endian);
+    _incPos(8);
+  }
+
+  /// Write variant size integer
+  void writeVarInt(int value, [Endian endian = Endian.big]) {
+    /// unsigned int
+    if (value >= 0) {
+      if (value <= 0xFF) {
+        writeUInt8(IntTypes.UInt8);
+        writeUInt8(value);
+      } else if (value <= 0xFFFF) {
+        writeUInt8(IntTypes.UInt16);
+        writeUInt16(value);
+      } else if (value <= 0xFFFFFFFF) {
+        writeUInt8(IntTypes.UInt32);
+        writeUInt32(value);
+      } else {// if (value < 0xFFFFFFFFFFFFFFFF) { // 0xFFFFFFFFFFFFFFFF BUG?
+        writeUInt8(IntTypes.UInt64);
+        writeUInt64(value);
+      }
+    } else {
+      if (value >= -128) {
+        writeUInt8(IntTypes.Int8);
+        writeInt8(value);
+      } else if (value >= -32768) {
+        writeUInt8(IntTypes.Int16);
+        writeInt16(value);
+      } else if (value >= -2147483648) {
+        writeUInt8(IntTypes.Int32);
+        writeInt32(value);
+      } else if (value >= -9223372036854775808) {
+        writeUInt8(IntTypes.Int64);
+        writeInt64(value);
+      }
+    }
   }
 
   /// Read list from current pos with [length]
@@ -225,15 +297,28 @@ class BinaryData extends Object with IterableMixin {
   /// Read string with length
   String readStringWithLength() {
     final len = _readLength();
-    if (len < 1)
-      return null;
+    if (len < 1) return null;
     return readString(len);
+  }
+
+  /// Read Int8 from buffer
+  int readInt8() {
+    final res = _bytes.getInt8(_pos);
+    _incPos(1, false);
+    return res;
   }
 
   /// Read UInt8 from buffer
   int readUInt8() {
     final res = _bytes.getUint8(_pos);
     _incPos(1, false);
+    return res;
+  }
+
+  /// Read Int16 from buffer
+  int readInt16() {
+    final res = _bytes.getInt16(_pos);
+    _incPos(2, false);
     return res;
   }
 
@@ -244,11 +329,50 @@ class BinaryData extends Object with IterableMixin {
     return res;
   }
 
+  /// Read Int32 from buffer
+  int readInt32() {
+    final res = _bytes.getInt32(_pos);
+    _incPos(4, false);
+    return res;
+  }
+
   /// Read UInt32 from buffer
   int readUInt32() {
     final res = _bytes.getUint32(_pos);
     _incPos(4, false);
     return res;
+  }
+
+  /// Read Int64 from buffer
+  int readInt64() {
+    final res = _bytes.getInt64(_pos);
+    _incPos(8, false);
+    return res;
+  }
+
+  /// Read variant integer
+  int readVarInt() {
+    int intType = readUInt8();
+    switch (intType) {
+      case IntTypes.Int8:
+        return readInt8();
+      case IntTypes.Int16:
+        return readInt16();
+      case IntTypes.Int32:
+        return readInt32();
+      case IntTypes.Int64:
+        return readInt64();
+      case IntTypes.UInt8:
+        return readUInt8();
+      case IntTypes.UInt16:
+        return readUInt16();
+      case IntTypes.UInt32:
+        return readUInt32();
+      case IntTypes.UInt64:
+        return readUInt64();
+    }
+
+    throw new BinaryDataException("Unknown int type");
   }
 
   /// Read UInt64 from buffer
