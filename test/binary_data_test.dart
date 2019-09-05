@@ -5,14 +5,14 @@ import 'package:test/test.dart';
 void main() {
   group('BinaryData', () {
     test('length', () {
-      var binData = new BinaryData.fromList([3,4,5,2,1]);
+      var binData = BinaryData.fromList([3,4,5,2,1]);
       binData.readUInt8();
       binData.readUInt8();
       expect(binData.length == 5, isTrue);
     });
 
     test('remain', () {
-      var binData = new BinaryData.fromList([3,4,5,2,1,5,4,2,1]);
+      var binData = BinaryData.fromList([3,4,5,2,1,5,4,2,1]);
       binData.readUInt8();
       binData.readUInt8();
       binData.readList();
@@ -20,39 +20,40 @@ void main() {
     });
 
     test('fromlist', () {
-      var binData1 = new BinaryData.fromList([1,2,3,4,5,6]);
-      var binData2 = new BinaryData.fromList([1,2,3,4,5,6]);
+      var binData1 = BinaryData.fromList([1,2,3,4,5,6]);
+      var binData2 = BinaryData.fromList([1,2,3,4,5,6]);
       expect(binData1.toHex() == binData2.toHex(), isTrue);
     });
 
     test('readList with length', () {
-      var binData1 = new BinaryData.fromList([1,2,3,4,5,6]);
+      var binData1 = BinaryData.fromList([1,2,3,4,5,6]);
       binData1.setPos(2);
       var binData2 = binData1.readList(3);
-      final eq = const ListEquality().equals;
+      const listEquality = const ListEquality<int>();
+      final eq = listEquality.equals;
 
       expect(eq(binData2.toList(), [3,4,5]), isTrue);
     });
 
     test('readList to the end', () {
-      var binData1 = new BinaryData.fromList([1,2,3,4,5,6]);
+      var binData1 = BinaryData.fromList([1,2,3,4,5,6]);
       binData1.setPos(2);
       var binData2 = binData1.readList();
-      final eq = const ListEquality().equals;
+      final eq = const ListEquality<int>().equals;
 
       expect(eq(binData2.toList(), [3,4,5,6]), isTrue);
     });
 
     test('getArray', () {
-      var binData1 = new BinaryData.fromList([1,2,3,4,5,6]);
+      var binData1 = BinaryData.fromList([1,2,3,4,5,6]);
       var binData2 = binData1.getArray(2, 3);
-      final eq = const ListEquality().equals;
+      final eq = const ListEquality<int>().equals;
 
       expect(eq(binData2.toList(), [3,4,5]), isTrue);
     });
 
     test("read/write varint", () {
-      final binary = new BinaryData();
+      final binary = BinaryData();
       binary.writeVarInt(0x32);
       binary.writeVarInt(-127);
       binary.writeVarInt(0xFF32);
@@ -64,7 +65,7 @@ void main() {
 
       binary.setPos(0);
 
-      final eq = const Equality().equals;
+      final eq = const Equality<int>().equals;
       expect(eq(binary.readVarInt(), 0x32), isTrue);
       expect(eq(binary.readVarInt(), -127), isTrue);
       expect(eq(binary.readVarInt(), 0xFF32), isTrue);
@@ -73,6 +74,24 @@ void main() {
       expect(eq(binary.readVarInt(), -63213), isTrue);
       expect(eq(binary.readVarInt(), 0xFFFFFFFF84), isTrue);
       expect(eq(binary.readVarInt(), -31237547212), isTrue);
+    });
+
+    test("read/write float32", () {
+      final binary = BinaryData();
+      binary.writeFloat32(45.3);
+      binary.setPos(0);
+      final eq = const Equality<bool>().equals;
+      final val =binary.readFloat32();
+      expect(eq(val > 45.29 && val < 45.31, true), isTrue);
+    });
+
+    test("read/write float64", () {
+      final binary = BinaryData();
+      binary.writeFloat32(99.99);
+      binary.setPos(0);
+      final eq = const Equality<bool>().equals;
+      final val =binary.readFloat32();
+      expect(eq(val > 99.98 && val < 99.999, true), isTrue);
     });
   });
 

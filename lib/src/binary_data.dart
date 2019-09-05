@@ -42,7 +42,7 @@ class LimitedBufferIterator extends Iterator<int> {
 ///  For working with bytes in memory
 ///  Functions with read/write prefix are stream like and works with current position
 ///  Function with set/get prefix uses position as parameter
-class BinaryData extends Object with IterableMixin {
+class BinaryData extends Object with IterableMixin<int> {
   /// Increase part size
   static const PART_SIZE = 100;
 
@@ -92,8 +92,18 @@ class BinaryData extends Object with IterableMixin {
 
   /// Read length from buffer
   int _readLength() {
-    // TODO: read dynamic length
-    return readUInt8();
+    var len = 0;
+    while (true) {
+      var v = readUInt8();
+      if (v & 0x80 > 0) {
+        len += v & 0x7F;
+      } else {
+        len += v;
+        break;
+      }        
+    }
+
+    return len;
   }
 
   /// Init variables
@@ -214,6 +224,13 @@ class BinaryData extends Object with IterableMixin {
     _incPos(2);
   }
 
+  /// Write Int32
+  void writeInt32(int value, [Endian endian = Endian.big]) {
+    _prepareSize(4);
+    _bytes.setInt32(_pos, value, endian);
+    _incPos(4);
+  }
+
   /// Write UInt32
   void writeUInt32(int value, [Endian endian = Endian.big]) {
     _prepareSize(4);
@@ -221,11 +238,11 @@ class BinaryData extends Object with IterableMixin {
     _incPos(4);
   }
 
-  /// Write Int32
-  void writeInt32(int value, [Endian endian = Endian.big]) {
-    _prepareSize(4);
-    _bytes.setInt32(_pos, value, endian);
-    _incPos(4);
+  /// Write Int64
+  void writeInt64(int value, [Endian endian = Endian.big]) {
+    _prepareSize(8);
+    _bytes.setInt64(_pos, value, endian);
+    _incPos(8);
   }
 
   /// Write UInt64
@@ -235,10 +252,17 @@ class BinaryData extends Object with IterableMixin {
     _incPos(8);
   }
 
-  /// Write Int64
-  void writeInt64(int value, [Endian endian = Endian.big]) {
+  /// Write Float32
+  void writeFloat32(double value, [Endian endian = Endian.big]) {
+    _prepareSize(4);
+    _bytes.setFloat32(_pos, value, endian);
+    _incPos(4);
+  }
+
+  /// Write Float64
+  void writeFloat64(double value, [Endian endian = Endian.big]) {
     _prepareSize(8);
-    _bytes.setInt64(_pos, value, endian);
+    _bytes.setFloat64(_pos, value, endian);
     _incPos(8);
   }
 
@@ -255,9 +279,11 @@ class BinaryData extends Object with IterableMixin {
       } else if (value <= 0xFFFFFFFF) {
         writeUInt8(IntTypes.UInt32);
         writeUInt32(value);
-      } else {// if (value < 0xFFFFFFFFFFFFFFFF) { // 0xFFFFFFFFFFFFFFFF BUG?
+      } else if (value < 0x7FFFFFFFFFFFFFFF || value == 0xFFFFFFFFFFFFFFFF) {
         writeUInt8(IntTypes.UInt64);
         writeUInt64(value);
+      } else {
+        throw BinaryDataException("Wrong integer value");
       }
     } else {
       if (value >= -128) {
@@ -272,6 +298,8 @@ class BinaryData extends Object with IterableMixin {
       } else if (value >= -9223372036854775808) {
         writeUInt8(IntTypes.Int64);
         writeInt64(value);
+      } else {
+        throw BinaryDataException("Wrong integer value");
       }
     }
   }
@@ -350,6 +378,27 @@ class BinaryData extends Object with IterableMixin {
     return res;
   }
 
+  /// Read UInt64 from buffer
+  int readUInt64() {
+    final res = _bytes.getUint64(_pos);
+    _incPos(8, false);
+    return res;
+  }
+
+  /// Read Float32 from buffer
+  double readFloat32() {
+    final res = _bytes.getFloat32(_pos);
+    _incPos(4);
+    return res;
+  }
+
+  /// Read Float64 from buffer
+  double readFloat64() {
+    final res = _bytes.getFloat64(_pos);
+    _incPos(8);
+    return res;
+  }
+
   /// Read variant integer
   int readVarInt() {
     int intType = readUInt8();
@@ -373,13 +422,6 @@ class BinaryData extends Object with IterableMixin {
     }
 
     throw new BinaryDataException("Unknown int type");
-  }
-
-  /// Read UInt64 from buffer
-  int readUInt64() {
-    final res = _bytes.getUint64(_pos);
-    _incPos(8, false);
-    return res;
   }
 
   /// Get array from [pos] and [length]
