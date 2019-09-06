@@ -186,7 +186,7 @@ class BinaryData extends Object with IterableMixin<int> {
 
   /// Add a binary data to this
   void writeBinaryData(BinaryData binary) {
-    writeList(binary._buffer);
+    writeList(binary.getList());
   }
 
   /// Add raw UTF-8 string
