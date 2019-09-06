@@ -114,6 +114,12 @@ class BinaryData extends Object with IterableMixin<int> {
     _pos = 0;
   }
 
+  /// Check bounds of position
+  void _checkBounds(int pos) {
+    if (pos < 0 && pos >= _length)
+      throw BinaryDataException("Position out of bounds");
+  }
+
   /// Current length
   int get length => _length;
 
@@ -422,6 +428,12 @@ class BinaryData extends Object with IterableMixin<int> {
     }
 
     throw new BinaryDataException("Unknown int type");
+  }
+
+  /// Get byte from buffer
+  int getUInt8(int pos) {
+    _checkBounds(pos);
+    return _buffer[pos];
   }
 
   /// Get all data as copy of list

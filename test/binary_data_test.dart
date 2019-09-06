@@ -60,6 +60,13 @@ void main() {
       expect(eq(binData2, [1, 2, 3, 4, 5, 6]), isTrue);
     });
 
+    test('getUInt8', () {
+      var binData1 = BinaryData.fromList([99, 34, 92]);            
+      expect(binData1.getUInt8(0), 99);
+      expect(binData1.getUInt8(1), 34);
+      expect(binData1.getUInt8(2), 92);
+    });
+
     test("read/write varint", () {
       final binary = BinaryData();
       binary.writeVarInt(0x32);
