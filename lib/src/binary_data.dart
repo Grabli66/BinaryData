@@ -178,6 +178,11 @@ class BinaryData extends Object with IterableMixin<int> {
     _incPos(value.length);
   }
 
+  /// Add a binary data to this
+  void writeBinaryData(BinaryData binary) {
+    writeList(binary._buffer);
+  }
+
   /// Add raw UTF-8 string
   void writeString(String value) {
     final arr = _utf8.encode(value);
