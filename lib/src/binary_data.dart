@@ -140,17 +140,12 @@ class BinaryData extends Object with IterableMixin<int> {
 
   /// Return iterator
   @override
-  Iterator<int> get iterator => new LimitedBufferIterator(_buffer, _length);
-
-  /// Copy buffer to data
-  Uint8List toData() {
-    return _buffer.buffer.asUint8List(0, _length);
-  }
+  Iterator<int> get iterator => new LimitedBufferIterator(_buffer, _length);  
 
   /// Convert data to hex string
   String toHex() {
     var sb = new List<String>();
-    final buff = toData();
+    final buff = getList();
     for (var b in buff) {
       var val = b.toRadixString(16);
       if (val.length < 2) val = "0" + val;
@@ -312,7 +307,7 @@ class BinaryData extends Object with IterableMixin<int> {
       len = length;
     }
 
-    final res = getArray(_pos, len);
+    final res = getSlice(_pos, len);
     _incPos(len, false);
     return res;
   }
@@ -424,8 +419,13 @@ class BinaryData extends Object with IterableMixin<int> {
     throw new BinaryDataException("Unknown int type");
   }
 
-  /// Get array from [pos] and [length]
-  Uint8List getArray(int pos, int length) {
+  /// Get all data as copy of list
+  Uint8List getList() {
+    return _buffer.buffer.asUint8List(0, _length);
+  }
+
+  /// Get list from [pos] and [length]
+  Uint8List getSlice(int pos, int length) {
     return _bytes.buffer.asUint8List(pos, length);
   }
 }

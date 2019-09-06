@@ -44,12 +44,20 @@ void main() {
       expect(eq(binData2.toList(), [3,4,5,6]), isTrue);
     });
 
-    test('getArray', () {
+    test('getSlice', () {
       var binData1 = BinaryData.fromList([1,2,3,4,5,6]);
-      var binData2 = binData1.getArray(2, 3);
+      var binData2 = binData1.getSlice(2, 3);
       final eq = const ListEquality<int>().equals;
 
       expect(eq(binData2.toList(), [3,4,5]), isTrue);
+    });
+
+    test('getList', () {
+      var binData1 = BinaryData.fromList([1,2,3,4,5,6]);
+      var binData2 = binData1.getList();
+      final eq = const ListEquality<int>().equals;
+
+      expect(eq(binData2, [1,2,3,4,5,6]), isTrue);
     });
 
     test("read/write varint", () {
