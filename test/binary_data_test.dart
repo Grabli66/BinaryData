@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:binary_data/binary_data_lib.dart';
-import 'package:binary_data/src/binary_stream_reader.dart';
 import 'package:collection/collection.dart';
 import 'package:test/test.dart';
 

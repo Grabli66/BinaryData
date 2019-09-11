@@ -1,6 +1,4 @@
-import 'dart:async';
-
-import 'package:binary_data/binary_data_lib.dart';
+part of '../binary_data_lib.dart';
 
 /// Reader of data
 typedef Object _DataReaderFunc();
