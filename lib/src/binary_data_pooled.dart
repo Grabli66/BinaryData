@@ -7,20 +7,20 @@ class BinaryDataPooled extends BinaryData {
 
   /// Factory constructor
   factory BinaryDataPooled() {
-    if (_pool.isEmpty) return new BinaryDataPooled._internal();
+    if (_pool.isEmpty) return BinaryDataPooled._internal();
 
-    var res = _pool.removeFirst() ?? new BinaryDataPooled._internal();
+    var res = _pool.removeFirst() ?? BinaryDataPooled._internal();
     res.clear();
     return res;
   }
 
   /// Create binary data from UInt8List
   factory BinaryDataPooled.fromUInt8List(Uint8List data) {
-    if (_pool.isEmpty) return new BinaryDataPooled._internalFromList(data);
+    if (_pool.isEmpty) return BinaryDataPooled._internalFromList(data);
 
     var res = _pool.removeFirst();
     if (res == null) {
-      res = new BinaryDataPooled._internalFromList(data);
+      res = BinaryDataPooled._internalFromList(data);
       return res;
     }
 
@@ -32,8 +32,7 @@ class BinaryDataPooled extends BinaryData {
   BinaryDataPooled._internal() : super();
 
   /// Private constructor
-  BinaryDataPooled._internalFromList(Uint8List data)
-      : super.fromList(data);
+  BinaryDataPooled._internalFromList(Uint8List data) : super.fromList(data);
 
   /// For release object
   void release() {

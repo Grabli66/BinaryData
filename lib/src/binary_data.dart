@@ -430,10 +430,28 @@ class BinaryData extends Object with IterableMixin<int> {
     throw new BinaryDataException("Unknown int type");
   }
 
-  /// Get byte from buffer
-  int getUInt8(int pos) {
+  /// Get UInt8 from buffer
+  int getUInt8(int pos, [Endian endian = Endian.big]) {
     _checkBounds(pos);
-    return _buffer[pos];
+    return _bytes.getUint8(pos);
+  }
+
+  /// Get UInt16 from buffer
+  int getUInt16(int pos, [Endian endian = Endian.big]) {
+    _checkBounds(pos + 1);
+    return _bytes.getUint16(pos, endian);
+  }
+
+  /// Get UInt32 from buffer
+  int getUInt32(int pos, [Endian endian = Endian.big]) {
+    _checkBounds(pos + 3);
+    return _bytes.getUint32(pos, endian);
+  }
+
+  /// Get UInt32 from buffer
+  int getUInt64(int pos, [Endian endian = Endian.big]) {
+    _checkBounds(pos + 7);
+    return _bytes.getUint64(pos, endian);
   }
 
   /// Get all data as copy of list

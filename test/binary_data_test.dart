@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:binary_data/binary_data_lib.dart';
+import 'package:binary_data/src/binary_stream_reader.dart';
 import 'package:collection/collection.dart';
 import 'package:test/test.dart';
 
@@ -61,7 +64,7 @@ void main() {
     });
 
     test('getUInt8', () {
-      var binData1 = BinaryData.fromList([99, 34, 92]);            
+      var binData1 = BinaryData.fromList([99, 34, 92]);
       expect(binData1.getUInt8(0), 99);
       expect(binData1.getUInt8(1), 34);
       expect(binData1.getUInt8(2), 92);
@@ -132,6 +135,38 @@ void main() {
       var binData4 = new BinaryDataPooled();
 
       expect(binData3 == binData4, isTrue);
+    });
+  });
+
+  group('BinaryStreamReader', () {
+    test('read data async', () async {
+      final stream = StreamController<int>();
+      final reader = BinaryStreamReader.fromStream(stream.stream);
+      Future.delayed(Duration(milliseconds: 1), () {
+        // Read UInt8
+        stream.add(34);
+        stream.add(44);
+
+        // Read UInt16
+        stream.add(0x33);
+        stream.add(0xFA);
+
+        // Read UInt32
+        stream.add(0x12);
+        stream.add(0x44);
+        stream.add(0xAA);
+        stream.add(0x78);
+      });
+
+      final b1 = await reader.readUInt8();
+      final b2 = await reader.readUInt8();
+      final u16 = await reader.readUInt16();
+      final u32 = await reader.readUInt32();
+
+      expect(b1 == 34, isTrue);
+      expect(b2 == 44, isTrue);
+      expect(u16 == 0x33FA, isTrue);
+      expect(u32 == 0x1244AA78, isTrue);
     });
   });
 }
