@@ -140,7 +140,7 @@ void main() {
   group('BinaryStreamReader', () {
     test('read data async', () async {
       final stream = StreamController<int>();
-      final reader = BinaryStreamReader.fromStream(stream.stream);
+      final reader = BinaryStreamReader(stream.stream);
       Future.delayed(Duration(milliseconds: 1), () {
         // Read UInt8
         stream.add(34);

@@ -45,7 +45,7 @@ class BinaryStreamReader {
   }
 
   /// Create from stream
-  BinaryStreamReader.fromStream(this._stream) {
+  BinaryStreamReader(this._stream) {
     _stream.listen((data) {
       _binary.writeUInt8(data);
 
