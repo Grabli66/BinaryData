@@ -76,7 +76,7 @@ class BinaryStreamReader {
 
     return _addTask(size, () {
       return fnc();
-    }).then((dynamic x) {
+    }).then((Object x) {
       return x as int;
     });
   }
@@ -97,7 +97,7 @@ class BinaryStreamReader {
 
     return _addTask(size, () {
       return fnc();
-    }).then((dynamic x) {
+    }).then((Object x) {
       return x as int;
     });
   }
@@ -118,8 +118,27 @@ class BinaryStreamReader {
 
     return _addTask(size, () {
       return fnc();
-    }).then((dynamic x) {
+    }).then((Object x) {
       return x as int;
+    });
+  }
+
+  /// Async read list from data
+  Future<List<int>> readList(int size) async {    
+    final fnc = () {
+      final res = _binary.getSlice(_currentPos, size);
+      _currentPos += size;
+      return res;
+    };
+
+    if (_checkSize(size)) {
+      return fnc();
+    }
+
+    return _addTask(size, () {
+      return fnc();
+    }).then((Object x) {
+      return x as List<int>;
     });
   }
 }

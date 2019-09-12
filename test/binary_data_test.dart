@@ -154,7 +154,13 @@ void main() {
         stream.add(0x12);
         stream.add(0x44);
         stream.add(0xAA);
-        stream.add(0x78);
+        stream.add(0x78); 
+
+        // Read list  
+        stream.add(0x49);
+        stream.add(0xA5);
+        stream.add(0xC8);
+        stream.add(0xFF);      
       });
 
       final b1 = await reader.readUInt8();
@@ -162,10 +168,15 @@ void main() {
       final u16 = await reader.readUInt16();
       final u32 = await reader.readUInt32();
 
+      final lst = await reader.readList(4);
+
       expect(b1 == 34, isTrue);
       expect(b2 == 44, isTrue);
       expect(u16 == 0x33FA, isTrue);
       expect(u32 == 0x1244AA78, isTrue);
+
+      final eq = const ListEquality<int>().equals;
+      expect(eq(lst, [0x49, 0xA5, 0xC8, 0xFF]), isTrue);
     });
   });
 }
