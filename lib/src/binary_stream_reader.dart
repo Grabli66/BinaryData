@@ -4,7 +4,10 @@ part of '../binary_data_lib.dart';
 typedef Object _DataReaderFunc();
 
 /// Task to read data
-class _ReadTask {
+abstract class _ReadTask {}
+
+/// Task to read number data
+class _ReadSizedTask<T> extends _ReadTask {
   /// Size needed
   final int size;
 
@@ -12,10 +15,10 @@ class _ReadTask {
   final _DataReaderFunc readerFunc;
 
   /// Completer of task
-  final Completer<Object> completer;
+  final Completer<T> completer;
 
   /// Constructor
-  _ReadTask(this.size, this.readerFunc, this.completer);
+  _ReadSizedTask(this.size, this.readerFunc, this.completer);
 }
 
 /// Read binary data from stream async
@@ -33,9 +36,9 @@ class BinaryStreamReader {
   var _currentPos = 0;
 
   /// Add async task to execute then size is enought
-  Future<Object> _addTask(int size, _DataReaderFunc executer) {
-    final completer = Completer<Object>();
-    _asyncReaders.add(_ReadTask(size, executer, completer));
+  Future<T> _addSizedTask<T>(int size, _DataReaderFunc executer) {
+    final completer = Completer<T>();
+    _asyncReaders.add(_ReadSizedTask<T>(size, executer, completer));
     return completer.future;
   }
 
@@ -51,10 +54,18 @@ class BinaryStreamReader {
 
       if (_asyncReaders.isNotEmpty) {
         final task = _asyncReaders.first;
-        if (_checkSize(task.size)) {
-          final res = task.readerFunc();
-          task.completer.complete(res);
-          _asyncReaders.removeAt(0);
+        if (task is _ReadSizedTask<int>) {
+          if (_checkSize(task.size)) {
+            final res = task.readerFunc() as int;
+            task.completer.complete(res);
+            _asyncReaders.removeAt(0);
+          }
+        } else if (task is _ReadSizedTask<List<int>>) {
+          if (_checkSize(task.size)) {
+            final res = task.readerFunc() as List<int>;
+            task.completer.complete(res);
+            _asyncReaders.removeAt(0);
+          }
         }
       }
     });
@@ -74,10 +85,8 @@ class BinaryStreamReader {
       return fnc();
     }
 
-    return _addTask(size, () {
+    return _addSizedTask(size, () {
       return fnc();
-    }).then((Object x) {
-      return x as int;
     });
   }
 
@@ -95,10 +104,8 @@ class BinaryStreamReader {
       return fnc();
     }
 
-    return _addTask(size, () {
+    return _addSizedTask(size, () {
       return fnc();
-    }).then((Object x) {
-      return x as int;
     });
   }
 
@@ -116,15 +123,13 @@ class BinaryStreamReader {
       return fnc();
     }
 
-    return _addTask(size, () {
+    return _addSizedTask(size, () {
       return fnc();
-    }).then((Object x) {
-      return x as int;
     });
   }
 
   /// Async read list from data
-  Future<List<int>> readList(int size) async {    
+  Future<List<int>> readList(int size) async {
     final fnc = () {
       final res = _binary.getSlice(_currentPos, size);
       _currentPos += size;
@@ -135,10 +140,34 @@ class BinaryStreamReader {
       return fnc();
     }
 
-    return _addTask(size, () {
+    return _addSizedTask(size, () {
       return fnc();
-    }).then((Object x) {
-      return x as List<int>;
     });
+  }
+
+  /// Async read string line
+  Future<List<int>> readLine() async {
+    if (_checkSize(2)) {
+      final _resBinary = BinaryData();
+      var found = false;
+      for (var i = _currentPos; i < _binary.length; i++) {
+        final b = _binary.getUInt8(i);
+        if (b == 0x0D) {
+          continue;
+        }
+
+        if (b == 0x0A) {
+          found = true;
+          break;
+        }
+
+        _resBinary.writeUInt8(b);
+      }
+      if (found) {
+        return _resBinary.getList();
+      }
+    }
+
+    return null;
   }
 }
