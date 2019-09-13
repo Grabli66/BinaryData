@@ -100,7 +100,7 @@ class BinaryData extends Object with IterableMixin<int> {
       } else {
         len += v;
         break;
-      }        
+      }
     }
 
     return len;
@@ -146,7 +146,7 @@ class BinaryData extends Object with IterableMixin<int> {
 
   /// Return iterator
   @override
-  Iterator<int> get iterator => new LimitedBufferIterator(_buffer, _length);  
+  Iterator<int> get iterator => new LimitedBufferIterator(_buffer, _length);
 
   /// Convert data to hex string
   String toHex() {
@@ -200,6 +200,11 @@ class BinaryData extends Object with IterableMixin<int> {
     final arr = _utf8.encode(value);
     writeLength(arr.length);
     writeList(arr);
+  }
+
+  /// Add CR LF to buffer
+  void writeCRLF() {
+    writeUInt16(0x0D0A);
   }
 
   /// Write Int8
