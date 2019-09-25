@@ -112,6 +112,15 @@ void main() {
         expect(eq(val > 99.98 && val < 99.999, true), isTrue);
       });
 
+       test("read/write unix stamp", () {
+        final binary = BinaryData();
+        final date = DateTime(2019, 9, 25);        
+        binary.writeUnixStampSeconds(date);
+        binary.setPos(0);
+        final rdate = binary.readUnixStampSeconds();
+        expect(date == rdate, isTrue);
+      });
+
       test('writeBinaryData', () {
         var binData1 = BinaryData.fromList([1, 2, 3, 4, 5, 6]);
         var binData2 = BinaryData();

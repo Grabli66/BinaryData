@@ -277,6 +277,12 @@ class BinaryData extends Object with IterableMixin<int> {
     _incPos(8);
   }
 
+  /// Write date as unix stamp seconds
+  void writeUnixStampSeconds(DateTime dateTime) {
+    final stamp = (dateTime.millisecondsSinceEpoch / 1000).round();
+    writeUInt32(stamp);
+  }
+
   /// Write variant size integer
   void writeVarInt(int value, [Endian endian = Endian.big]) {
     /// unsigned int
@@ -408,6 +414,12 @@ class BinaryData extends Object with IterableMixin<int> {
     final res = _bytes.getFloat64(_pos);
     _incPos(8);
     return res;
+  }
+
+  /// Read unix time as 4 byte seconds to DateTime
+  DateTime readUnixStampSeconds([bool isUtc = false]) {
+    final stamp = readUInt32();
+    return DateTime.fromMillisecondsSinceEpoch(stamp * 1000, isUtc: isUtc);
   }
 
   /// Read variant integer
