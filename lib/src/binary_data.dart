@@ -126,10 +126,23 @@ class BinaryData extends Object with IterableMixin<int> {
   /// Remain bytes in binary data
   int get remain => _length - _pos;
 
+  /// Position is on the end of buffer
+  bool get isEnd => remain <= 0;
+
   /// Constructor
   BinaryData() {
     _init(new Uint8List(PART_SIZE));
     _length = 0;
+  }
+
+  /// Set position to the start
+  void toStart() {
+    setPos(0);    
+  }
+
+  /// Set position to the end
+  void toEnd() {
+    setPos(length);
   }
 
   /// Clear position and length

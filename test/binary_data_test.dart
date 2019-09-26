@@ -121,6 +121,15 @@ void main() {
         expect(date == rdate, isTrue);
       });
 
+      test("IsEnd", () {
+        final binary = BinaryData();
+        binary.writeUInt32(146);
+        binary.setPos(0);
+        binary.readUInt32();
+
+        expect(binary.isEnd, isTrue);
+      });
+
       test('writeBinaryData', () {
         var binData1 = BinaryData.fromList([1, 2, 3, 4, 5, 6]);
         var binData2 = BinaryData();
