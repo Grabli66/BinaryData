@@ -24,7 +24,7 @@ class _ReadSizedTask<T> extends _ReadTask {
 /// Read binary data from stream async
 class BinaryStreamReader {
   /// Stream to read from
-  final Stream<int> _stream;
+  final Stream<Object> _stream;
 
   /// Buffer for data
   final BinaryData _binary = BinaryData();
@@ -50,7 +50,15 @@ class BinaryStreamReader {
   /// Create from stream
   BinaryStreamReader(this._stream) {
     _stream.listen((data) {
-      _binary.writeUInt8(data);
+      if (data is int) {
+        _binary.writeUInt8(data);
+      } else if (data is List<int>) {
+        _binary.writeList(data);
+      } else if (data is BinaryData) {
+        _binary.writeBinaryData(data);
+      } else {
+        return;
+      }
 
       if (_asyncReaders.isNotEmpty) {
         final task = _asyncReaders.first;
@@ -91,11 +99,11 @@ class BinaryStreamReader {
   }
 
   /// Async read UInt16
-  Future<int> readUInt16() async {
+  Future<int> readUInt16([Endian endian]) async {
     const size = 2;
 
     final fnc = () {
-      final res = _binary.getUInt16(_currentPos);
+      final res = _binary.getUInt16(_currentPos, endian);
       _currentPos += size;
       return res;
     };
@@ -110,11 +118,11 @@ class BinaryStreamReader {
   }
 
   /// Async read UInt32
-  Future<int> readUInt32() async {
+  Future<int> readUInt32([Endian endian]) async {
     const size = 4;
 
     final fnc = () {
-      final res = _binary.getUInt32(_currentPos);
+      final res = _binary.getUInt32(_currentPos, endian);
       _currentPos += size;
       return res;
     };

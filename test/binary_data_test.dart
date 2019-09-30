@@ -112,9 +112,9 @@ void main() {
         expect(eq(val > 99.98 && val < 99.999, true), isTrue);
       });
 
-       test("read/write unix stamp", () {
+      test("read/write unix stamp", () {
         final binary = BinaryData();
-        final date = DateTime(2019, 9, 25);        
+        final date = DateTime(2019, 9, 25);
         binary.writeUnixStampSeconds(date);
         binary.setPos(0);
         final rdate = binary.readUnixStampSeconds();
@@ -158,7 +158,7 @@ void main() {
 
     group('BinaryStreamReader', () {
       test('read data async', () async {
-        final stream = StreamController<int>();
+        final stream = StreamController<Object>();
         final reader = BinaryStreamReader(stream.stream);
         Future.delayed(Duration(milliseconds: 1), () {
           // Read UInt8
@@ -180,6 +180,9 @@ void main() {
           stream.add(0xA5);
           stream.add(0xC8);
           stream.add(0xFF);
+
+          // Add list and by bytes
+          stream.add([1, 2, 3]);
         });
 
         final b1 = await reader.readUInt8();
@@ -187,15 +190,23 @@ void main() {
         final u16 = await reader.readUInt16();
         final u32 = await reader.readUInt32();
 
-        final lst = await reader.readList(4);
+        final lst1 = await reader.readList(4);
+
+        final bb1 = await reader.readUInt8();
+        final bb2 = await reader.readUInt8();
+        final bb3 = await reader.readUInt8();
 
         expect(b1 == 34, isTrue);
         expect(b2 == 44, isTrue);
         expect(u16 == 0x33FA, isTrue);
         expect(u32 == 0x1244AA78, isTrue);
 
+        expect(bb1 == 1, isTrue);
+        expect(bb2 == 2, isTrue);
+        expect(bb3 == 3, isTrue);
+
         final eq = const ListEquality<int>().equals;
-        expect(eq(lst, [0x49, 0xA5, 0xC8, 0xFF]), isTrue);
+        expect(eq(lst1, [0x49, 0xA5, 0xC8, 0xFF]), isTrue);
       });
     });
   });

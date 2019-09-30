@@ -490,6 +490,7 @@ class BinaryData extends Object with IterableMixin<int> {
   }
 
   /// Get list from [pos] and [length]
+  /// Does not remove data from buffer
   Uint8List getSlice(int pos, int length) {
     return _bytes.buffer.asUint8List(pos, length);
   }
