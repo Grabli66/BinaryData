@@ -4,7 +4,10 @@ part of '../binary_data_lib.dart';
 typedef Object _DataReaderFunc();
 
 /// Task to read data
-abstract class _ReadTask {}
+abstract class _ReadTask {
+  /// Отсылает ожидающему результат ошибку
+  void error(Exception e);
+}
 
 /// Task to read number data
 class _ReadSizedTask<T> extends _ReadTask {
@@ -19,6 +22,12 @@ class _ReadSizedTask<T> extends _ReadTask {
 
   /// Constructor
   _ReadSizedTask(this.size, this.readerFunc, this.completer);
+
+  /// Отсылает ожидающему результат ошибку
+  @override
+  void error(Exception e) {
+    completer.completeError(e);
+  }
 }
 
 /// Read binary data from stream async
@@ -58,7 +67,7 @@ class BinaryStreamReader {
         _binary.writeBinaryData(data);
       } else {
         return;
-      }
+      }      
 
       if (_asyncReaders.isNotEmpty) {
         final task = _asyncReaders.first;
@@ -76,6 +85,13 @@ class BinaryStreamReader {
           }
         }
       }
+    }, onError: (Object e) {
+      // Завершает все задачи с ошибкой и очищает буффер
+      for (var reader in _asyncReaders) {
+        reader.error(e as Exception);
+        _binary.clear();
+      }
+      _asyncReaders.clear();
     });
   }
 
