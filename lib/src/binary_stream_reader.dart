@@ -44,6 +44,13 @@ class BinaryStreamReader {
   /// Текущая позиция чтения
   var _currentPos = 0;
 
+  /// Сбрасывает состояние
+  void _reset() {
+    _binary.clear();
+    _currentPos = 0;
+    _asyncReaders.clear();
+  }
+
   /// Add async task to execute then size is enought
   Future<T> _addSizedTask<T>(int size, _DataReaderFunc executer) {
     final completer = Completer<T>();
@@ -86,12 +93,11 @@ class BinaryStreamReader {
         }
       }
     }, onError: (Object e) {
-      // Завершает все задачи с ошибкой и очищает буффер
+      // Завершает все задачи с ошибкой
       for (var reader in _asyncReaders) {
         reader.error(e as Exception);
-        _binary.clear();
       }
-      _asyncReaders.clear();
+      _reset();
     });
   }
 
