@@ -137,7 +137,7 @@ class BinaryData extends Object with IterableMixin<int> {
 
   /// Set position to the start
   void toStart() {
-    setPos(0);    
+    setPos(0);
   }
 
   /// Set position to the end
@@ -374,87 +374,88 @@ class BinaryData extends Object with IterableMixin<int> {
   }
 
   /// Read Int16 from buffer
-  int readInt16() {
-    final res = _bytes.getInt16(_pos);
+  int readInt16([Endian endian = Endian.big]) {
+    final res = _bytes.getInt16(_pos, endian);
     _incPos(2, false);
     return res;
   }
 
   /// Read UInt16 from buffer
-  int readUInt16() {
-    final res = _bytes.getUint16(_pos);
+  int readUInt16([Endian endian = Endian.big]) {
+    final res = _bytes.getUint16(_pos, endian);
     _incPos(2, false);
     return res;
   }
 
   /// Read Int32 from buffer
-  int readInt32() {
-    final res = _bytes.getInt32(_pos);
+  int readInt32([Endian endian = Endian.big]) {
+    final res = _bytes.getInt32(_pos, endian);
     _incPos(4, false);
     return res;
   }
 
   /// Read UInt32 from buffer
-  int readUInt32() {
-    final res = _bytes.getUint32(_pos);
+  int readUInt32([Endian endian = Endian.big]) {
+    final res = _bytes.getUint32(_pos, endian);
     _incPos(4, false);
     return res;
   }
 
   /// Read Int64 from buffer
-  int readInt64() {
-    final res = _bytes.getInt64(_pos);
+  int readInt64([Endian endian = Endian.big]) {
+    final res = _bytes.getInt64(_pos, endian);
     _incPos(8, false);
     return res;
   }
 
   /// Read UInt64 from buffer
-  int readUInt64() {
-    final res = _bytes.getUint64(_pos);
+  int readUInt64([Endian endian = Endian.big]) {
+    final res = _bytes.getUint64(_pos, endian);
     _incPos(8, false);
     return res;
   }
 
   /// Read Float32 from buffer
-  double readFloat32() {
-    final res = _bytes.getFloat32(_pos);
+  double readFloat32([Endian endian = Endian.big]) {
+    final res = _bytes.getFloat32(_pos, endian);
     _incPos(4);
     return res;
   }
 
   /// Read Float64 from buffer
-  double readFloat64() {
-    final res = _bytes.getFloat64(_pos);
+  double readFloat64([Endian endian = Endian.big]) {
+    final res = _bytes.getFloat64(_pos, endian);
     _incPos(8);
     return res;
   }
 
   /// Read unix time as 4 byte seconds to DateTime
-  DateTime readUnixStampSeconds([bool isUtc = false]) {
-    final stamp = readUInt32();
+  DateTime readUnixStampSeconds(
+      [bool isUtc = false, Endian endian = Endian.big]) {
+    final stamp = readUInt32(endian);
     return DateTime.fromMillisecondsSinceEpoch(stamp * 1000, isUtc: isUtc);
   }
 
   /// Read variant integer
-  int readVarInt() {
+  int readVarInt([Endian endian = Endian.big]) {
     int intType = readUInt8();
     switch (intType) {
       case IntTypes.Int8:
         return readInt8();
       case IntTypes.Int16:
-        return readInt16();
+        return readInt16(endian);
       case IntTypes.Int32:
-        return readInt32();
+        return readInt32(endian);
       case IntTypes.Int64:
-        return readInt64();
+        return readInt64(endian);
       case IntTypes.UInt8:
         return readUInt8();
       case IntTypes.UInt16:
-        return readUInt16();
+        return readUInt16(endian);
       case IntTypes.UInt32:
-        return readUInt32();
+        return readUInt32(endian);
       case IntTypes.UInt64:
-        return readUInt64();
+        return readUInt64(endian);
     }
 
     throw new BinaryDataException("Unknown int type");
