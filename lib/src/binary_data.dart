@@ -495,4 +495,15 @@ class BinaryData extends Object with IterableMixin<int> {
   Uint8List getSlice(int pos, int length) {
     return _bytes.buffer.asUint8List(pos, length);
   }
+
+  /// Get UTF-8 string from [pos] of [len]
+  String getString(int pos, int len) {
+    return utf8.decode(getSlice(pos, len));
+  }
+
+  /// Return as string
+  @override
+  String toString() {
+    return utf8.decode(getList());
+  }
 }
