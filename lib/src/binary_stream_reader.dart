@@ -74,7 +74,7 @@ class BinaryStreamReader {
         _binary.writeBinaryData(data);
       } else {
         return;
-      }      
+      }
 
       if (_asyncReaders.isNotEmpty) {
         final task = _asyncReaders.first;
@@ -177,27 +177,34 @@ class BinaryStreamReader {
 
   /// Async read string line
   Future<List<int>> readLine() async {
-    if (_checkSize(2)) {
-      final _resBinary = BinaryData();
-      var found = false;
-      for (var i = _currentPos; i < _binary.length; i++) {
-        final b = _binary.getUInt8(i);
-        if (b == 0x0D) {
-          continue;
-        }
+    final _resBinary = BinaryData();
+    while (true) {
+      final b = await readUInt8();
+      _resBinary.writeUInt8(b);
 
-        if (b == 0x0A) {
-          found = true;
-          break;
+      if (b == 0x0A) {
+        if (_resBinary.getUInt8(_resBinary.length - 1) == 0x0D) {
+          return _resBinary.getSlice(0, _resBinary.length - 1);
+        } else {
+          return _resBinary.getList();
         }
-
-        _resBinary.writeUInt8(b);
-      }
-      if (found) {
-        return _resBinary.getList();
       }
     }
+  }
 
-    return null;
+  /// Async read until find [char]
+  Future<List<int>> readUntilChar(String char) async {
+    final rune = char.codeUnitAt(0);
+
+    final _resBinary = BinaryData();
+    while (true) {
+      final b = await readUInt8();      
+      if (b == rune) {
+        _currentPos -= 1;
+        return _resBinary.getList();
+      } else {
+        _resBinary.writeUInt8(b);
+      }
+    }
   }
 }
