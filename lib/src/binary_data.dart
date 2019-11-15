@@ -309,11 +309,9 @@ class BinaryData extends Object with IterableMixin<int> {
       } else if (value <= 0xFFFFFFFF) {
         writeUInt8(IntTypes.UInt32);
         writeUInt32(value);
-      } else if (value < 0x7FFFFFFFFFFFFFFF || value == 0xFFFFFFFFFFFFFFFF) {
+      } else {
         writeUInt8(IntTypes.UInt64);
         writeUInt64(value);
-      } else {
-        throw BinaryDataException("Wrong integer value");
       }
     } else {
       if (value >= -128) {
@@ -325,11 +323,9 @@ class BinaryData extends Object with IterableMixin<int> {
       } else if (value >= -2147483648) {
         writeUInt8(IntTypes.Int32);
         writeInt32(value);
-      } else if (value >= -9223372036854775808) {
+      } else {
         writeUInt8(IntTypes.Int64);
         writeInt64(value);
-      } else {
-        throw BinaryDataException("Wrong integer value");
       }
     }
   }
