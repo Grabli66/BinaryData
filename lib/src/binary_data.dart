@@ -43,7 +43,7 @@ class LimitedBufferIterator extends Iterator<int> {
 ///  Functions with read/write prefix are stream like and works with current position
 ///  Function with set/get prefix uses position as parameter
 class BinaryData extends Object with IterableMixin<int> {
-  /// Increase part size
+  /// Default part size
   static const PART_SIZE = 100;
 
   /// Buffer increase ratio
@@ -63,6 +63,9 @@ class BinaryData extends Object with IterableMixin<int> {
 
   /// Current pos
   int _pos;
+
+  /// Return current buffer size
+  int get bufferSize => _buffer.length;
 
   /// Prepare size
   void _prepareSize(int wantedSize) {
@@ -129,10 +132,21 @@ class BinaryData extends Object with IterableMixin<int> {
   /// Position is on the end of buffer
   bool get isEnd => remain <= 0;
 
-  /// Constructor
-  BinaryData() {
-    _init(new Uint8List(PART_SIZE));
+  BinaryData._(int capacity) {
+    _init(new Uint8List(capacity));
     _length = 0;
+  }
+
+  /// Constructor
+  BinaryData() : this._(PART_SIZE);
+
+  /// Create BinaryData from List<int>
+  BinaryData.withCapacity(int capacity) : this._(capacity);
+
+  /// Create BinaryData from List<int>
+  BinaryData.fromList(List<int> data) {
+    var list = new Uint8List.fromList(data);
+    _init(list);
   }
 
   /// Set position to the start
@@ -149,12 +163,6 @@ class BinaryData extends Object with IterableMixin<int> {
   void clear() {
     _pos = 0;
     _length = 0;
-  }
-
-  /// Create BinaryData from List<int>
-  BinaryData.fromList(List<int> data) {
-    var list = new Uint8List.fromList(data);
-    _init(list);
   }
 
   /// Return iterator

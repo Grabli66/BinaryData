@@ -7,11 +7,16 @@ import 'package:test/test.dart';
 void main() {
   group("All tests", () {
     group('BinaryData', () {
+      test('create with capacity', () {
+        var binData = BinaryData.withCapacity(1000);
+        expect(binData.bufferSize, 1000);
+      });
+
       test('length', () {
         var binData = BinaryData.fromList([3, 4, 5, 2, 1]);
         binData.readUInt8();
         binData.readUInt8();
-        expect(binData.length == 5, isTrue);
+        expect(binData.length, 5);
       });
 
       test('remain', () {
@@ -19,13 +24,13 @@ void main() {
         binData.readUInt8();
         binData.readUInt8();
         binData.readList();
-        expect(binData.remain == 0, isTrue);
+        expect(binData.remain, 0);
       });
 
       test('fromlist', () {
         var binData1 = BinaryData.fromList([1, 2, 3, 4, 5, 6]);
         var binData2 = BinaryData.fromList([1, 2, 3, 4, 5, 6]);
-        expect(binData1.toHex() == binData2.toHex(), isTrue);
+        expect(binData1.toHex(), binData2.toHex());
       });
 
       test('readList with length', () {
