@@ -1,4 +1,8 @@
-part of '../binary_data_lib.dart';
+import 'dart:collection';
+import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:binary_data/binary_data.dart';
 
 /// Integer type constants
 class IntTypes {

@@ -311,10 +311,10 @@
       "name": "binary_data",
       "rootUri": "../",
       "packageUri": "lib/",
-      "languageVersion": "2.4"
+      "languageVersion": "2.7"
     }
   ],
-  "generated": "2019-12-25T11:43:30.931053Z",
+  "generated": "2020-01-31T10:30:47.413570Z",
   "generator": "pub",
-  "generatorVersion": "2.8.0-dev.0.0"
+  "generatorVersion": "2.8.0-dev.5.0"
 }

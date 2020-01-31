@@ -1,9 +1,9 @@
 name: binary_data
 description: Library for manipulating bytes in memory.
-version: 0.0.2
+version: 0.5.0
 
 environment:
-  sdk: '>=2.4.0 <3.0.0'
+  sdk: '>=2.7.0 <3.0.0'
 
 dependencies:
   collection: any

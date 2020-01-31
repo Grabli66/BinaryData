@@ -1,6 +1,7 @@
 import 'dart:async';
+import 'dart:typed_data';
 
-import 'package:binary_data/binary_data_lib.dart';
+import 'package:binary_data/binary_data.dart';
 import 'package:collection/collection.dart';
 import 'package:test/test.dart';
 
@@ -146,21 +147,6 @@ void main() {
       });
     });
 
-    group('BinaryDataPooled', () {
-      test('equals', () {
-        var binData1 = new BinaryDataPooled();
-        var binData2 = new BinaryDataPooled();
-
-        expect(binData1 == binData2, isFalse);
-
-        var binData3 = new BinaryDataPooled();
-        binData3.release();
-        var binData4 = new BinaryDataPooled();
-
-        expect(binData3 == binData4, isTrue);
-      });
-    });
-
     group('BinaryStreamReader', () {
       test('read data async', () async {
         final stream = StreamController<Object>();
@@ -212,6 +198,54 @@ void main() {
 
         final eq = const ListEquality<int>().equals;
         expect(eq(lst1, [0x49, 0xA5, 0xC8, 0xFF]), isTrue);
+      });
+    });
+
+    group('Uint8ListExtension', () {
+      test('getUint8', () async {
+        final binary = Uint8List.fromList([3, 8, 2]);
+        expect(binary.getUint8(0), 3);
+        expect(binary.getUint8(1), 8);
+        expect(binary.getUint8(2), 2);
+      });
+
+      test('getUint16', () async {
+        final binary = Uint8List.fromList([0, 2, 0, 5, 9, 0, 20, 40]);
+        var bd = BinaryData.fromList(binary);
+        expect(binary.getUint16(0), bd.getUInt16(0));
+        expect(binary.getUint16(2), bd.getUInt16(2));
+        expect(binary.getUint16(4), bd.getUInt16(4));
+        expect(binary.getUint16(6), bd.getUInt16(6));
+
+        expect(
+            binary.getUint16(0, Endian.little), bd.getUInt16(0, Endian.little));
+        expect(
+            binary.getUint16(2, Endian.little), bd.getUInt16(2, Endian.little));
+        expect(
+            binary.getUint16(4, Endian.little), bd.getUInt16(4, Endian.little));
+        expect(
+            binary.getUint16(6, Endian.little), bd.getUInt16(6, Endian.little));
+      });
+
+      test('getUint32', () async {
+        final binary = Uint8List.fromList([0, 2, 0, 5, 9, 0, 20, 40]);
+        var bd = BinaryData.fromList(binary);
+        expect(binary.getUint32(0), bd.getUInt32(0));
+        expect(binary.getUint32(4), bd.getUInt32(4));
+
+        expect(
+            binary.getUint32(0, Endian.little), bd.getUInt32(0, Endian.little));
+        expect(
+            binary.getUint32(4, Endian.little), bd.getUInt32(4, Endian.little));
+      });
+
+      test('getUint64', () async {
+        final binary = Uint8List.fromList([0, 2, 0, 5, 9, 0, 20, 40]);
+        var bd = BinaryData.fromList(binary);
+        expect(binary.getUint64(0), bd.getUInt64(0));
+
+        expect(
+            binary.getUint64(0, Endian.little), bd.getUInt64(0, Endian.little));
       });
     });
   });

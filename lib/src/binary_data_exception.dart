@@ -1,5 +1,3 @@
-part of binary_data;
-
 /// Exception of BinaryData library
 class BinaryDataException implements Exception {
   /// Message of exception
