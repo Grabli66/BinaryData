@@ -53,4 +53,11 @@ extension Uint8ListExtension on Uint8List {
         (this[position + 1] << 8) +
         (this[position]);
   }
+
+  /// Get DateTime from 4 bytes (seconds from 1970-01-01)
+  DateTime getUnixTimeSeconds(int position,
+      [bool isUtc = false, Endian endian = Endian.big]) {
+    final seconds = this.getUint32(position, endian);
+    return DateTime.fromMillisecondsSinceEpoch(seconds * 1000, isUtc: isUtc);
+  }
 }
