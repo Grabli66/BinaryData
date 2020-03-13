@@ -199,7 +199,17 @@ class BinaryData extends Object with IterableMixin<int> {
 
   /// Add length to buffer
   void writeLength(int value) {
-    writeUInt8(value);
+    while (value > 0) {
+      final b = value & 0x7F;
+
+      if (value > 0x7F) {
+        writeUInt8(0xFF);
+      } else {
+        writeUInt8(b);
+      }
+
+      value = value - 0x7F;
+    }
   }
 
   /// Add List<int>
@@ -362,7 +372,7 @@ class BinaryData extends Object with IterableMixin<int> {
 
   /// Read string with length
   String readStringWithLength() {
-    final len = _readLength();
+    final len = _readLength();    
     if (len < 1) return null;
     return readString(len);
   }

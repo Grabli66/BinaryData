@@ -1,6 +1,6 @@
 import 'dart:async';
-
 import 'dart:typed_data';
+import 'dart:convert';
 
 import 'package:binary_data/binary_data.dart';
 
@@ -67,9 +67,25 @@ class BinaryStreamReader {
     return _currentPos + size <= _binary.length;
   }
 
+  /// Read length from buffer
+  Future<int> _readLength() async {
+    var len = 0;
+    while (true) {      
+      var v = await readUInt8();
+      if (v & 0x80 > 0) {
+        len += v & 0x7F;
+      } else {
+        len += v;
+        break;
+      }
+    }
+
+    return len;
+  }
+
   /// Create from stream
   BinaryStreamReader(this._stream) {
-    _stream.listen((data) {
+    _stream.listen((data) {      
       if (data is int) {
         _binary.writeUInt8(data);
       } else if (data is List<int>) {
@@ -102,6 +118,11 @@ class BinaryStreamReader {
         reader.error(e as Exception);
       }
       _reset();
+    }, onDone: () {
+      for (var reader in _asyncReaders) {
+        // TODO: closed exception
+        reader.error(Exception());
+      }
     });
   }
 
@@ -202,7 +223,7 @@ class BinaryStreamReader {
 
     final _resBinary = BinaryData();
     while (true) {
-      final b = await readUInt8();      
+      final b = await readUInt8();
       if (b == rune) {
         _currentPos -= 1;
         return _resBinary.getList();
@@ -210,5 +231,18 @@ class BinaryStreamReader {
         _resBinary.writeUInt8(b);
       }
     }
+  }
+
+  /// Read string from current pos with [length]
+  Future<String> readString(int length) async {
+    final data = await readList(length);
+    return utf8.decode(data);
+  }
+
+  /// Read string with length
+  Future<String> readStringWithLength() async {    
+    final len = await _readLength();    
+    if (len < 1) return null;
+    return await readString(len);
   }
 }

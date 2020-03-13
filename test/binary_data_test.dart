@@ -44,6 +44,20 @@ void main() {
         expect(eq(binData2.toList(), [3, 4, 5]), isTrue);
       });
 
+      test('readStringWithLength', () {
+        final binary = BinaryData();
+        final str1 = """help - Print help
+exit - Disconnect from console server
+cc - Create new class
+ci - Create new instance of class
+cca - Create new attribute for class
+cia - Create new attribute for instance""";
+        binary.writeStringWithLength(str1);
+        binary.toStart();        
+        final str2 = binary.readStringWithLength();
+        expect(str1, str2);
+      });
+
       test('readList to the end', () {
         var binData1 = BinaryData.fromList([1, 2, 3, 4, 5, 6]);
         binData1.setPos(2);
